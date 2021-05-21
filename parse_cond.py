@@ -62,12 +62,13 @@ for var in dfd.iterrows():
     
     given_cond= var['Choices, Calculations, OR Slider Labels']
     
-    if var['Field Type']=='calc':
+    # dfs is each row of df i.e. fake data of each subject
+    for dfs in df.iterrows():
         
-        # dfs is each row of df i.e. fake data of each subject
-        for dfs in df.iterrows():
-            
-            dfs
+        # assign a three digit random ID
+        dfs.record_id= np.random.randint(100,1000)
+        
+        if var['Field Type']=='calc':
             
             given_cond= given_cond.replace('[','dfs.')
             given_cond= given_cond.replace(']','')
@@ -109,22 +110,21 @@ for var in dfd.iterrows():
             
             cond_value= eval(cond_new)
             
-
-    elif var['Field Type'] in ['radio', 'checkbox', 'dropdown']:
-        values= [int(val_lab.split(', ')[0]) for val_lab in given_cond.split(' | ')]
+        elif var['Field Type'] in ['radio', 'checkbox', 'dropdown']:
+            values= [int(val_lab.split(', ')[0]) for val_lab in given_cond.split(' | ')]
+            
+            # randomize according to multinomial distribution
+            L= len(values)
+            prob= [1/L]*L
+            cond_value= values[np.where(np.random.multinomial(1,prob))[0][0]]
         
-        # randomize according to multinomial distribution
-        L= len(values)
-        prob= [1/L]*L
-        cond_value= values[np.where(np.random.multinomial(1,prob))[0][0]]
-    
-    elif var['Field Type']=='yesno':
-        cond_value= '1' if round(np.random.rand()) else '0'
-    
-    
-    print(cond_value)
-    
-    # ENH randomization
-    dfs.var['Variable / Field Name']= cond_value
+        elif var['Field Type']=='yesno':
+            cond_value= '1' if round(np.random.rand()) else '0'
+        
+        
+        print(cond_value)
+        
+        # ENH randomization
+        dfs.var['Variable / Field Name']= cond_value
 
 
