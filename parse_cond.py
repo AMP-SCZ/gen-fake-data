@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+
 
 # read file
 df= pd.read_csv('AMPSCZFormRepository_DataDictionary_2021-05-14.csv')
@@ -58,6 +60,9 @@ dfd= pd.read_csv('')
 # df is fake data, initialize it
 df= pd.DataFrame(columns= dfd['Variable / Field Name'])
 
+# append 100 empty rows here
+df.record_id= np.random.randint(100,1000, 100)
+
 for var in dfd.iterrows():
     
     given_cond= var['Choices, Calculations, OR Slider Labels']
@@ -66,7 +71,7 @@ for var in dfd.iterrows():
     for dfs in df.iterrows():
         
         # assign a three digit random ID
-        dfs.record_id= np.random.randint(100,1000)
+        # dfs.record_id= np.random.randint(100,1000)
         
         if var['Field Type']=='calc':
             
