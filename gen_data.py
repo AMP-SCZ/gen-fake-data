@@ -91,6 +91,7 @@ for var in dfd.iterrows():
                     # print(given_cond)
                     cond_value= eval(given_cond)
                 
+                # this deals with arithmatic addition
                 else:
                 
                     given_cond= given_cond.replace(']','')
@@ -118,9 +119,10 @@ for var in dfd.iterrows():
                 
         else:
             if var['Field Type']=='text':
-            
-                if var['Text Validation Type OR Show Slider Number']=='number' or \
-                   var['Text Validation Type OR Show Slider Number']=='integer':
+                
+                text_type= var['Text Validation Type OR Show Slider Number']
+                
+                if  text_type=='number' or text_type=='integer':
                         
                     if var['Text Validation Min'] is np.nan:
                         num_min= 1
@@ -140,7 +142,27 @@ for var in dfd.iterrows():
                         exp= tmp.split('10^')[-1]
                         cond_value= cond_value * 10**int(exp)
                         
-            
+                elif text_type=='time':
+                    
+                    if var['Text Validation Min'] is np.nan:
+                        num_min= 0
+                    else:
+                        num_min= int(var['Text Validation Min'].split(':')[0])
+                        
+                    if var['Text Validation Max'] is np.nan:
+                        num_max= 24
+                    else:
+                        num_max= int(var['Text Validation Max'].split(':')[0])
+                    
+                    cond_value= f'{np.random.randint(num_min, num_max)}:00'
+                    
+                    
+                elif text_type=='date_ymd':
+                    pass
+                    # remember last date of the same row
+                
+                
+                
         # print(cond_value)
         all_cond_values.append(cond_value)
     
