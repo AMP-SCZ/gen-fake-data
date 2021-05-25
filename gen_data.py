@@ -118,7 +118,8 @@ for var in dfd.iterrows():
         else:
             if var['Field Type']=='text':
             
-                if var['Text Validation Type OR Show Slider Number']=='number':
+                if var['Text Validation Type OR Show Slider Number']=='number' or \
+                   var['Text Validation Type OR Show Slider Number']=='integer':
                         
                     if var['Text Validation Min'] is np.nan:
                         num_min= 1
