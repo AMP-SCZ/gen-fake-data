@@ -34,8 +34,7 @@ for var in dfd.iterrows():
             if var['Field Type']=='calc':
                 
                 if 'if(' in given_cond:
-                
-                    '''
+                    
                     # parse calculation
                     tmp_plus=[]
                     for str_plus in given_cond.split('+'):
@@ -45,11 +44,14 @@ for var in dfd.iterrows():
                             
                             tmp_or=[]
                             for cond in str_and.split('or'):
+                                cond= cond.replace(']','')
+                                cond= cond.replace('[', 'dfs[1].')
+                                cond= cond.replace('=','==')
                                 cond= cond.replace('if(',' ')
                                 cond= cond.replace(')','')
                                 
                                 # evaluate condition and obtain result
-                                print(cond)
+                                # print(cond)
                                 try:
                                     c,t,f=cond.split(',')
                                 except:
@@ -72,11 +74,10 @@ for var in dfd.iterrows():
                         cond_and_new= ' and '.join(tmp_and)
                         tmp_plus.append(cond_and_new)
 
-                    # rejoin the pluses    
+                    # rejoin the pluses
                     cond_new= ' + '.join(tmp_plus)
-                    '''
                     
-                    cond_value= ''
+                    cond_value= eval(cond_new)
                     
                 elif 'sum(' in given_cond:
                 
