@@ -9,6 +9,7 @@ df= pd.DataFrame(columns= dfd['Variable / Field Name'])
 
 # append 100 empty rows here
 N=100
+# assign a three digit random ID
 df.record_id= np.random.randint(100,1000,N)
 
 for var in dfd.iterrows():    
@@ -24,62 +25,74 @@ for var in dfd.iterrows():
             all_cond_values.append('')
             continue
         
-        # assign a three digit random ID
-        # dfs.record_id= np.random.randint(100,1000)
         
         if var['Field Type']=='calc':
             
-            if 'if(' in given_cond or 'sum(' in given_cond:
-                all_cond_values.append('')
-                continue
+            if 'if(' in given_cond:
             
-            given_cond= given_cond.replace(']','')
-            given_cond= given_cond.replace('[','dfs[1].')
-            given_cond= given_cond.replace('=','==')
-            given_cond= given_cond.lower()
-            
-            '''
-            # parse calculation
-            tmp_plus=[]
-            for str_plus in given_cond.split('+'):
+                '''
+                # parse calculation
+                tmp_plus=[]
+                for str_plus in given_cond.split('+'):
 
-                tmp_and=[]
-                for str_and in str_plus.split('and'):
+                    tmp_and=[]
+                    for str_and in str_plus.split('and'):
+                        
+                        tmp_or=[]
+                        for cond in str_and.split('or'):
+                            cond= cond.replace('if(',' ')
+                            cond= cond.replace(')','')
+                            
+                            # evaluate condition and obtain result
+                            print(cond)
+                            try:
+                                c,t,f=cond.split(',')
+                            except:
+                                print(c)
+                                
+                            # print(c)
+                            if eval(c):
+                                value= t
+                            else:
+                                value= f
+                                
+                            tmp_or.append(value)
+                            
+
+                        # rejoin the ors
+                        cond_or_new= ' or '.join(tmp_or)
+                        tmp_and.append(cond_or_new)
                     
-                    tmp_or=[]
-                    for cond in str_and.split('or'):
-                        cond= cond.replace('if(',' ')
-                        cond= cond.replace(')','')
-                        
-                        # evaluate condition and obtain result
-                        print(cond)
-                        try:
-                            c,t,f=cond.split(',')
-                        except:
-                            print(c)
-                            
-                        # print(c)
-                        if eval(c):
-                            value= t
-                        else:
-                            value= f
-                            
-                        tmp_or.append(value)
-                        
+                    # rejoin the ands
+                    cond_and_new= ' and '.join(tmp_and)
+                    tmp_plus.append(cond_and_new)
 
-                    # rejoin the ors
-                    cond_or_new= ' or '.join(tmp_or)
-                    tmp_and.append(cond_or_new)
+                # rejoin the pluses    
+                cond_new= ' + '.join(tmp_plus)
+                '''
                 
-                # rejoin the ands
-                cond_and_new= ' and '.join(tmp_and)
-                tmp_plus.append(cond_and_new)
-
-            # rejoin the pluses    
-            cond_new= ' + '.join(tmp_plus)
-            '''
+                cond_value= ''
+                
+            elif 'sum(' in given_cond:
             
-            cond_value= eval(given_cond)
+                given_cond= given_cond.replace(']','')
+                given_cond= given_cond.replace('[','dfs[1].')
+                given_cond= given_cond.replace('sum(','sum([')
+                given_cond+= ']'
+                given_cond= given_cond.replace(')]','])')
+                given_cond= given_cond.lower()
+                
+                # print(given_cond)
+                # cond_value= eval(given_cond)
+            
+            else:
+            
+                given_cond= given_cond.replace(']','')
+                given_cond= given_cond.replace('[','dfs[1].')
+                given_cond= given_cond.replace('=','==')
+                given_cond= given_cond.lower()
+                            
+                cond_value= eval(given_cond)
             
         elif var['Field Type'] in ['radio', 'checkbox', 'dropdown']:
             values= []
@@ -97,10 +110,31 @@ for var in dfd.iterrows():
         elif var['Field Type']=='yesno':
             cond_value= 1 if round(np.random.rand()) else 0
         
+        elif var['Field Type']=='text':
+            
+            if var['Text Validation Type OR Show Slider Number']=='number':
+                    
+                if var['Text Validation Min'] is np.nan:
+                    num_min= 1
+                else:    
+                    num_min= int(var['Text Validation Min'])
+                    
+                if var['Text Validation Max'] is np.nan:
+                    num_max= 100
+                else:    
+                    num_max= int(var['Text Validation Max'])
+                    
+                cond_value= np.random.randint(num_min, num_max)
+                
+                if 'x 10^' in var['Field Note']:
+                    
+                    tmp= var['Field Note'].replace('/L','')
+                    exp= tmp.split('10^')[-1]
+                    cond_value= cond_value * 10**int(exp)
+                    
         
         # print(cond_value)
-        
-        # ENH randomization
+
         all_cond_values.append(cond_value)
     
     try:
