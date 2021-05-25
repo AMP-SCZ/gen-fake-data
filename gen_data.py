@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+from datetime import date, timedelta
+
+start_date= date(2021,5,13)
 
 # dfd is data dictionary
 dfd= pd.read_csv(r'C:\Users\tashr\Downloads\AMPSCZFormRepository_DataDictionary_2021-05-21.csv')
@@ -158,7 +161,17 @@ for var in dfd.iterrows():
                     
                     
                 elif text_type=='date_ymd':
-                    pass
+                    if var['Variable / Field Name']=='chrcrit_date':
+                        # recruitment within the next 3 months
+                        cond_value= start_date+ timedelta(days=np.random.randint(1,90))
+                        chrcrit_date= cond_value
+                    
+                    else:
+                        # dates in a column must be after chrcrit_date
+                        # and should be within 5 days of chrcrit_date
+                        cond_value= chrcrit_date+ timedelta(days=np.random.randint(0,5))
+                    
+                    cond_value= cond_value.strftime('%Y-%m-%d')
                     # remember last date of the same row
                 
                 
