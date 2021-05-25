@@ -10,9 +10,9 @@ dfd= pd.read_csv(r'C:\Users\tashr\Downloads\AMPSCZFormRepository_DataDictionary_
 # df is fake data, initialize it
 df= pd.DataFrame(columns= dfd['Variable / Field Name'])
 
-# append 100 empty rows here
+# append 100 empty rows
 N=100
-# assign a three digit random ID
+# assign a three digit random ID to each row i.e. research subject
 df.record_id= np.random.randint(100,1000,N)
 
 for var in dfd.iterrows():    
@@ -22,13 +22,6 @@ for var in dfd.iterrows():
     # dfs is each row of df i.e. fake data of each subject
     all_cond_values= []
     for dfs in df.iterrows():
-        
-        '''
-        given_cond= var['Choices, Calculations, OR Slider Labels']
-        if given_cond is np.nan:
-            all_cond_values.append('')
-            continue
-        '''
         
         cond_value=''
         
