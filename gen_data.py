@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from datetime import date, timedelta
+import re
 
 start_date= date(2021,5,13)
 
@@ -11,7 +12,7 @@ dfd= pd.read_csv(r'C:\Users\tashr\Downloads\AMPSCZFormRepository_DataDictionary_
 df= pd.DataFrame(columns= dfd['Variable / Field Name'])
 
 # append 100 empty rows
-N=100
+N=10
 # assign a three digit random ID to each row i.e. research subject
 df.record_id= np.random.randint(100,1000,N)
 
@@ -25,6 +26,56 @@ for var in dfd.iterrows():
         
         cond_value=''
         
+        # check branching logic
+        logic= var['Branching Logic (Show field only if...)']
+        if logic is not np.nan:
+            logic= logic.lower()
+            logic= logic.replace(']','')
+            logic= logic.replace('[','dfs[1].')
+            logic= logic.replace('=','==')
+            logic= logic.replace('>==','>=')
+            logic= logic.replace('<==','<=')
+            logic= logic.replace('\n',' ')
+            logic= logic.replace("<>''",' is not np.nan')
+            logic= logic.replace("!== ' '",' is not np.nan')
+            logic= logic.replace('<>', '!=')
+            
+            if 'chrfigs_depdxcalc' in logic and '>' in logic:
+                logic= logic.replace('dfs[1].','int(dfs[1].')
+                logic= logic.replace('>',')>')
+                
+            elif 'chrfigs_depdxcalc' in logic and '<' in logic:
+                logic= logic.replace('dfs[1].','int(dfs[1].')
+                logic= logic.replace('<',')<')
+            
+            
+            # notorious checkbox condition
+            # e.g. dfs[1].health_skincond(99) == '1'
+            if '(' in logic and ')' in logic:
+                # obtain checked status
+                checked= logic.split('==')[-1].strip()
+                if checked:
+                    # obtain checked value
+                    checked_value= int(re.search('\((.+?)\)', logic).group(1))
+                    # eliminate parenthetical element
+                    logic= re.sub('\((.+?)\)', '', logic)
+                    # reform logic with checked_value
+                    logic= logic.split('==')[0]+ f' == {checked_value}'
+            
+            try:
+                logic= eval(logic)
+                if not logic:
+                    all_cond_values.append(cond_value)
+                    continue
+                    
+            except TypeError as e:
+                print(e)
+                print(logic)
+                all_cond_values.append(cond_value)
+                continue
+                print('Wait')
+            
+            
         given_cond= var['Choices, Calculations, OR Slider Labels']
         if given_cond is not np.nan:
             if var['Field Type']=='calc':
@@ -165,8 +216,7 @@ for var in dfd.iterrows():
                         cond_value= chrcrit_date+ timedelta(days=np.random.randint(0,5))
                     
                     cond_value= cond_value.strftime('%Y-%m-%d')
-                    # remember last date of the same row
-                
+                                    
                 
                 
         # print(cond_value)
