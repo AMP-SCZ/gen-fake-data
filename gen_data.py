@@ -1,12 +1,22 @@
+#!/usr/bin/env python
+
 import pandas as pd
 import numpy as np
 from datetime import date, timedelta
 import re
+import sys
+from os.path import abspath
+
+
+if len(sys.argv)!=3:
+    print('''Usage: /path/to/gen_data.py dict.csv fake_out.csv''')
+    exit(0)
+
 
 start_date= date(2021,5,13)
 
 # dfd is data dictionary
-dfd= pd.read_csv('/home/tb571/Downloads/AMPSCZFormRepository_DataDictionary_2021-05-21.csv')
+dfd= pd.read_csv(abspath(sys.argv[1]))
 
 # df is fake data, initialize it
 df= pd.DataFrame(columns= dfd['Variable / Field Name'])
@@ -244,8 +254,4 @@ for var in dfd.iterrows():
 
     df[var['Variable / Field Name']]= all_cond_values
 
-
-
-df.to_csv('/home/tb571/Downloads/fake_data.csv', index= False)
-
-
+df.to_csv(abspath(sys.argv[2]), index= False)
