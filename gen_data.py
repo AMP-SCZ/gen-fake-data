@@ -12,7 +12,7 @@ dfd= pd.read_csv('/home/tb571/Downloads/AMPSCZFormRepository_DataDictionary_2021
 df= pd.DataFrame(columns= dfd['Variable / Field Name'])
 
 # append 100 empty rows
-N=10
+N=30
 # assign a three digit random ID to each row i.e. research subject
 df.record_id= np.random.randint(100,1000,N)
 
@@ -22,8 +22,9 @@ for var in dfd.iterrows():
     
     # dfs is each row of df i.e. fake data of each subject
     all_cond_values= []
-    # BUG df is not updating
-    # check the branching logic outside this loop?
+
+    # TODO below branching logic block could be placed here
+
     for dfs in df.iterrows():
         
         cond_value=''
@@ -182,7 +183,7 @@ for var in dfd.iterrows():
         print(all_cond_values)
     
 
-
+# TODO keeping this block separate from the above to have more control on debugging
 # apply branching logic
 for var in dfd.iterrows():
 
@@ -197,7 +198,6 @@ for var in dfd.iterrows():
 
         # check branching logic
         logic= var['Branching Logic (Show field only if...)']
-        
 
 
         if logic is not np.nan:
@@ -212,6 +212,7 @@ for var in dfd.iterrows():
             logic= logic.replace('\n',' ')
             logic= logic.replace("<>''",' is not np.nan')
             logic= logic.replace('<>', '!=')
+            # convert the right side of logical expression to int
             logic= logic.replace("'",'')
             
 
