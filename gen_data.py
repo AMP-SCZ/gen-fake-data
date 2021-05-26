@@ -198,18 +198,10 @@ for var in dfd.iterrows():
         # check branching logic
         logic= var['Branching Logic (Show field only if...)']
         
-        '''
-        if var['Variable / Field Name']=='chrfigs_depdxcalc':
-            print('wait')
-        '''
 
 
         if logic is not np.nan:
 
-            '''
-            if 'mother_info' in logic:
-                print('wait')
-            '''
 
             logic= logic.lower()
             logic= logic.replace(']','')
@@ -224,19 +216,7 @@ for var in dfd.iterrows():
             # logic = logic.replace("!== ''", ' is not np.nan')
             logic= logic.replace("'",'')
             
-            '''
-            if 'chrfigs_depdxcalc' in logic and '>' in logic:
-                logic= logic.replace('dfs[1].','int(dfs[1].')
-                logic= logic.replace('>',')>')
-                
-            elif 'chrfigs_depdxcalc' in logic and '<' in logic:
-                logic= logic.replace('dfs[1].','int(dfs[1].')
-                logic= logic.replace('<',')<')
-                        
-            if 'dfs[1].chrfigs_depdxcalc' in logic:
-                print(dfs[1].chrfigs_depdxcalc)
-            '''
-            
+
             # notorious checkbox condition
             # e.g. dfs[1].health_skincond(99) == '1'
             if '(' in logic and ')' in logic:
@@ -260,25 +240,6 @@ for var in dfd.iterrows():
                 # TypeError means dfs[1].chrfigs_depdxcalc is np.nan
                 cond_value= ''
 
-            '''
-            try:
-                if 'sibling8_p10' in logic:
-                    print(logic)
-                logic= eval(logic)
-                print(logic)
-                if not logic:
-                    cond_value=''
-                    
-            except TypeError as e:
-                print(e)
-                print(logic)
-                cond_value=''
-        
-            if cond_value:
-                if var['Variable / Field Name']=='chrfigs_depdxcalc':
-                    print(cond_value)
-            
-            '''
 
         all_cond_values.append(cond_value)        
 
