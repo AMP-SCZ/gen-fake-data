@@ -6,7 +6,7 @@ import re
 start_date= date(2021,5,13)
 
 # dfd is data dictionary
-dfd= pd.read_csv(r'C:\Users\tashr\Downloads\AMPSCZFormRepository_DataDictionary_2021-05-21.csv')
+dfd= pd.read_csv('/home/tb571/Downloads/AMPSCZFormRepository_DataDictionary_2021-05-21.csv')
 
 # df is fake data, initialize it
 df= pd.DataFrame(columns= dfd['Variable / Field Name'])
@@ -22,60 +22,12 @@ for var in dfd.iterrows():
     
     # dfs is each row of df i.e. fake data of each subject
     all_cond_values= []
+    # BUG df is not updating
+    # check the branching logic outside this loop?
     for dfs in df.iterrows():
         
         cond_value=''
         
-        # check branching logic
-        logic= var['Branching Logic (Show field only if...)']
-        if logic is not np.nan:
-            logic= logic.lower()
-            logic= logic.replace(']','')
-            logic= logic.replace('[','dfs[1].')
-            logic= logic.replace('=','==')
-            logic= logic.replace('>==','>=')
-            logic= logic.replace('<==','<=')
-            logic= logic.replace('\n',' ')
-            logic= logic.replace("<>''",' is not np.nan')
-            logic= logic.replace("!== ' '",' is not np.nan')
-            logic= logic.replace('<>', '!=')
-            
-            if 'chrfigs_depdxcalc' in logic and '>' in logic:
-                logic= logic.replace('dfs[1].','int(dfs[1].')
-                logic= logic.replace('>',')>')
-                
-            elif 'chrfigs_depdxcalc' in logic and '<' in logic:
-                logic= logic.replace('dfs[1].','int(dfs[1].')
-                logic= logic.replace('<',')<')
-            
-            
-            # notorious checkbox condition
-            # e.g. dfs[1].health_skincond(99) == '1'
-            if '(' in logic and ')' in logic:
-                # obtain checked status
-                checked= logic.split('==')[-1].strip()
-                if checked:
-                    # obtain checked value
-                    checked_value= int(re.search('\((.+?)\)', logic).group(1))
-                    # eliminate parenthetical element
-                    logic= re.sub('\((.+?)\)', '', logic)
-                    # reform logic with checked_value
-                    logic= logic.split('==')[0]+ f' == {checked_value}'
-            
-            try:
-                logic= eval(logic)
-                if not logic:
-                    all_cond_values.append(cond_value)
-                    continue
-                    
-            except TypeError as e:
-                print(e)
-                print(logic)
-                all_cond_values.append(cond_value)
-                continue
-                print('Wait')
-            
-            
         given_cond= var['Choices, Calculations, OR Slider Labels']
         if given_cond is not np.nan:
             if var['Field Type']=='calc':
@@ -124,7 +76,9 @@ for var in dfd.iterrows():
                     # rejoin the pluses
                     cond_new= ' + '.join(tmp_plus)
                     
+                    
                     cond_value= eval(cond_new)
+                    # print(cond_new, '=', cond_value)
                     
                 elif 'sum(' in given_cond:
                 
@@ -160,9 +114,7 @@ for var in dfd.iterrows():
                 L= len(values)
                 prob= [1/L]*L
                 cond_value= values[np.where(np.random.multinomial(1,prob))[0][0]]
-            
-            elif var['Field Type']=='yesno':
-                cond_value= 1 if round(np.random.rand()) else 0
+
                 
         else:
             if var['Field Type']=='text':
@@ -216,7 +168,9 @@ for var in dfd.iterrows():
                         cond_value= chrcrit_date+ timedelta(days=np.random.randint(0,5))
                     
                     cond_value= cond_value.strftime('%Y-%m-%d')
-                                    
+
+            elif var['Field Type']=='yesno':
+                cond_value= round(np.random.rand())
                 
                 
         # print(cond_value)
@@ -228,5 +182,86 @@ for var in dfd.iterrows():
         print(all_cond_values)
     
 
-df.to_csv(r'C:\Users\tashr\Downloads\fake_data.csv', index= False)
+"""
+# apply branching logic
+for var in dfd.iterrows():
+
+    var= var[1]
+
+    # dfs is each row of df i.e. fake data of each subject
+    all_cond_values= []
+
+    for dfs in df.iterrows():
+        
+        cond_value= dfs[1][var['Variable / Field Name']]
+
+        # check branching logic
+        logic= var['Branching Logic (Show field only if...)']
+        
+        '''
+        if var['Variable / Field Name']=='chrfigs_depdxcalc':
+            print('wait')
+        '''
+        
+        if logic is not np.nan:
+            logic= logic.lower()
+            logic= logic.replace(']','')
+            logic= logic.replace('[','dfs[1].')
+            logic= logic.replace('=','==')
+            logic= logic.replace('>==','>=')
+            logic= logic.replace('<==','<=')
+            logic= logic.replace('\n',' ')
+            logic= logic.replace("<>''",' is not np.nan')
+            logic= logic.replace("!== ' '",' is not np.nan')
+            logic= logic.replace('<>', '!=')
+            
+            '''
+            if 'chrfigs_depdxcalc' in logic and '>' in logic:
+                logic= logic.replace('dfs[1].','int(dfs[1].')
+                logic= logic.replace('>',')>')
+                
+            elif 'chrfigs_depdxcalc' in logic and '<' in logic:
+                logic= logic.replace('dfs[1].','int(dfs[1].')
+                logic= logic.replace('<',')<')
+                        
+            if 'dfs[1].chrfigs_depdxcalc' in logic:
+                print(dfs[1].chrfigs_depdxcalc)
+            '''
+            
+            # notorious checkbox condition
+            # e.g. dfs[1].health_skincond(99) == '1'
+            if '(' in logic and ')' in logic:
+                # obtain checked status
+                checked= logic.split('==')[-1].strip()
+                if checked:
+                    # obtain checked value
+                    checked_value= int(re.search('\((.+?)\)', logic).group(1))
+                    # eliminate parenthetical element
+                    logic= re.sub('\((.+?)\)', '', logic)
+                    # reform logic with checked_value
+                    logic= logic.split('==')[0]+ f' == {checked_value}'
+                    
+            
+            try:
+                logic= eval(logic)
+                if not logic:
+                    cond_value=''
+                    
+            except TypeError as e:
+                print(e)
+                print(logic)
+                cond_value=''
+        
+            if cond_value:
+                if var['Variable / Field Name']=='chrfigs_depdxcalc':
+                    print(cond_value)
+        
+        all_cond_values.append(cond_value)        
+
+    df[var['Variable / Field Name']]= all_cond_values
+
+"""
+
+df.to_csv('/home/tb571/Downloads/fake_data.csv', index= False)
+
 
