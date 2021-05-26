@@ -182,7 +182,7 @@ for var in dfd.iterrows():
         print(all_cond_values)
     
 
-"""
+
 # apply branching logic
 for var in dfd.iterrows():
 
@@ -202,8 +202,15 @@ for var in dfd.iterrows():
         if var['Variable / Field Name']=='chrfigs_depdxcalc':
             print('wait')
         '''
-        
+
+
         if logic is not np.nan:
+
+            '''
+            if 'mother_info' in logic:
+                print('wait')
+            '''
+
             logic= logic.lower()
             logic= logic.replace(']','')
             logic= logic.replace('[','dfs[1].')
@@ -212,8 +219,10 @@ for var in dfd.iterrows():
             logic= logic.replace('<==','<=')
             logic= logic.replace('\n',' ')
             logic= logic.replace("<>''",' is not np.nan')
-            logic= logic.replace("!== ' '",' is not np.nan')
+            # logic= logic.replace("!== ' '",' is not np.nan')
             logic= logic.replace('<>', '!=')
+            # logic = logic.replace("!== ''", ' is not np.nan')
+            logic= logic.replace("'",'')
             
             '''
             if 'chrfigs_depdxcalc' in logic and '>' in logic:
@@ -240,10 +249,23 @@ for var in dfd.iterrows():
                     logic= re.sub('\((.+?)\)', '', logic)
                     # reform logic with checked_value
                     logic= logic.split('==')[0]+ f' == {checked_value}'
-                    
-            
+
             try:
+                # print(logic)
+                logic = eval(logic)
+                if not logic:
+                    cond_value=''
+
+            except TypeError:
+                # TypeError means dfs[1].chrfigs_depdxcalc is np.nan
+                cond_value= ''
+
+            '''
+            try:
+                if 'sibling8_p10' in logic:
+                    print(logic)
                 logic= eval(logic)
+                print(logic)
                 if not logic:
                     cond_value=''
                     
@@ -255,12 +277,15 @@ for var in dfd.iterrows():
             if cond_value:
                 if var['Variable / Field Name']=='chrfigs_depdxcalc':
                     print(cond_value)
-        
+            
+            '''
+
         all_cond_values.append(cond_value)        
 
     df[var['Variable / Field Name']]= all_cond_values
 
-"""
+
+
 
 df.to_csv('/home/tb571/Downloads/fake_data.csv', index= False)
 
