@@ -211,9 +211,7 @@ for var in dfd.iterrows():
             logic= logic.replace('<==','<=')
             logic= logic.replace('\n',' ')
             logic= logic.replace("<>''",' is not np.nan')
-            # logic= logic.replace("!== ' '",' is not np.nan')
             logic= logic.replace('<>', '!=')
-            # logic = logic.replace("!== ''", ' is not np.nan')
             logic= logic.replace("'",'')
             
 
@@ -241,10 +239,9 @@ for var in dfd.iterrows():
                 cond_value= ''
 
 
-        all_cond_values.append(cond_value)        
+        all_cond_values.append(cond_value)
 
     df[var['Variable / Field Name']]= all_cond_values
-
 
 
 
