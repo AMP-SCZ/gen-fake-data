@@ -22,7 +22,7 @@ dfd= pd.read_csv(abspath(sys.argv[1]))
 df= pd.DataFrame(columns= dfd['Variable / Field Name'])
 
 # append 100 empty rows
-N=30
+N=10
 # assign a three digit random ID to each row i.e. research subject
 df.chric_subject_id= np.random.randint(100,1000,N)
 
@@ -54,13 +54,19 @@ for var in dfd.iterrows():
                             
                             tmp_or=[]
                             for cond in str_and.split('or'):
+                                # for all
                                 cond= cond.replace(']','')
                                 cond= cond.replace('[', 'dfs[1].')
                                 cond= cond.replace('=','==')
                                 cond= cond.replace('if(',' ')
+                                # for round() only
+                                cond= cond.replace('round(','')
+                                cond= cond.replace(',1))',')')
+                                # for all
                                 cond= cond.replace(')','')
                                 
                                 # evaluate condition and obtain result
+                                # print(cond)
                                 try:
                                     c,t,f=cond.split(',')
                                 except:
@@ -86,6 +92,7 @@ for var in dfd.iterrows():
                     cond_new= ' + '.join(tmp_plus)
                     
                     
+                    # print(cond)
                     cond_value= eval(cond_new)
                     # print(cond_new, '=', cond_value)
                     
@@ -114,13 +121,16 @@ for var in dfd.iterrows():
                 values= []
                 for val_lab in given_cond.split(' | '):
                     try:
+                        if 'chrrecruit_self_other'==var['Variable / Field Name']:
+                            print(val_lab, var['Variable / Field Name'])
+                            
                         values.append(int(val_lab.split(', ')[0]))
                     except:
                         # float
                         try:
                             values.append(float(val_lab.split(', ')[0]))
-                        # FIXME in the form
-                        # NA, Not Sure
+                        # FIX in the form
+                        # NA, Not Sure --> -99, Not Sure
                         except:
                             values.append('NA')
                 
@@ -204,6 +214,8 @@ for var in dfd.iterrows():
         print(all_cond_values)
     
 
+df.to_csv(abspath(sys.argv[2]), index= False)
+
 # TODO keeping this block separate from the above to have more control on debugging
 # apply branching logic
 for var in dfd.iterrows():
@@ -244,6 +256,7 @@ for var in dfd.iterrows():
                 checked= logic.split('==')[-1].strip()
                 if checked:
                     # obtain checked value
+                    print(var['Variable / Field Name'])
                     checked_value= int(re.search('\((.+?)\)', logic).group(1))
                     # eliminate parenthetical element
                     logic= re.sub('\((.+?)\)', '', logic)
