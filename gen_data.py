@@ -66,8 +66,7 @@ for var in dfd.iterrows():
                                     c,t,f=cond.split(',')
                                 except:
                                     print(c)
-                                    
-                                # print(c)
+                                
                                 if eval(c):
                                     value= t
                                 else:
@@ -100,7 +99,6 @@ for var in dfd.iterrows():
                     given_cond= given_cond.replace(')]','])')
                     given_cond= given_cond.lower()
                     
-                    # print(given_cond)
                     cond_value= eval(given_cond)
                 
                 # this deals with arithmatic addition
