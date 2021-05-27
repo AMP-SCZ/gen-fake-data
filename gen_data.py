@@ -24,7 +24,7 @@ df= pd.DataFrame(columns= dfd['Variable / Field Name'])
 # append 100 empty rows
 N=30
 # assign a three digit random ID to each row i.e. research subject
-df.record_id= np.random.randint(100,1000,N)
+df.chric_subject_id= np.random.randint(100,1000,N)
 
 for var in dfd.iterrows():    
     
@@ -108,7 +108,7 @@ for var in dfd.iterrows():
                     given_cond= given_cond.replace('[','dfs[1].')
                     given_cond= given_cond.replace('=','==')
                     given_cond= given_cond.lower()
-                                
+                    
                     cond_value= eval(given_cond)
                 
             elif var['Field Type'] in ['radio', 'checkbox', 'dropdown']:
@@ -117,7 +117,13 @@ for var in dfd.iterrows():
                     try:
                         values.append(int(val_lab.split(', ')[0]))
                     except:
-                        values.append(float(val_lab.split(', ')[0]))
+                        # float
+                        try:
+                            values.append(float(val_lab.split(', ')[0]))
+                        # FIXME in the form
+                        # NA, Not Sure
+                        except:
+                            values.append('NA')
                 
                 # randomize according to multinomial distribution
                 L= len(values)
@@ -166,7 +172,7 @@ for var in dfd.iterrows():
                     
                     
                 elif text_type=='date_ymd':
-                    if var['Variable / Field Name']=='chrcrit_date':
+                    if var['Variable / Field Name']=='chric_consent_date':
                         # recruitment within the next 3 months
                         cond_value= start_date+ timedelta(days=np.random.randint(1,90))
                         chrcrit_date= cond_value
@@ -177,6 +183,14 @@ for var in dfd.iterrows():
                         cond_value= chrcrit_date+ timedelta(days=np.random.randint(0,5))
                     
                     cond_value= cond_value.strftime('%Y-%m-%d')
+                
+                elif text_type=='datetime_ymd':
+                    # dates in a column must be after chrcrit_date
+                    # and should be within 5 days of chrcrit_date
+                    cond_value= chrcrit_date+ timedelta(days=np.random.randint(0,5), 
+                                                        hours=np.random.randint(0,24))
+                    
+                    cond_value= cond_value.strftime('%Y-%m-%d %H:%M')
 
             elif var['Field Type']=='yesno':
                 cond_value= round(np.random.rand())
