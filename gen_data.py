@@ -251,12 +251,19 @@ for var in dfd.iterrows():
 
             # notorious checkbox condition
             # e.g. dfs[1].health_skincond(99) == '1'
-            if '(' in logic and ')' in logic:
+            is_checkbox= False
+            paren_elm= re.search('\((.+?)\)', logic)
+            if paren_elm:
+                # at most two chars inside () for checkboxes
+                if len(paren_elm.group(1))<3:
+                    is_checkbox= True
+                
+            if is_checkbox:
                 # obtain checked status
                 checked= logic.split('==')[-1].strip()
                 if checked:
                     # obtain checked value
-                    print(var['Variable / Field Name'])
+                    # print(var['Variable / Field Name'])
                     checked_value= int(re.search('\((.+?)\)', logic).group(1))
                     # eliminate parenthetical element
                     logic= re.sub('\((.+?)\)', '', logic)
