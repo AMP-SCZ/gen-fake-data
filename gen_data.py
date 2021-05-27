@@ -61,11 +61,10 @@ for var in dfd.iterrows():
                                 cond= cond.replace(')','')
                                 
                                 # evaluate condition and obtain result
-                                # print(cond)
                                 try:
                                     c,t,f=cond.split(',')
                                 except:
-                                    print(c)
+                                    print(cond)
                                 
                                 if eval(c):
                                     value= t
