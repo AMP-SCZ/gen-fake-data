@@ -179,8 +179,8 @@ for var in dfd.iterrows():
                     
                     cond_value= f'{np.random.randint(num_min, num_max)}:00'
                     
-                    
-                elif text_type=='date_ymd':
+                
+                elif text_type=='date_ymd' or text_type=='datetime_ymd':
                     if var['Variable / Field Name']=='chric_consent_date':
                         # recruitment within the next 3 months
                         cond_value= start_date+ timedelta(days=np.random.randint(1,90))
@@ -191,16 +191,12 @@ for var in dfd.iterrows():
                         # and should be within 5 days of chrcrit_date
                         cond_value= chrcrit_date+ timedelta(days=np.random.randint(0,5))
                     
-                    cond_value= cond_value.strftime('%Y-%m-%d')
+                    if text_type=='date_ymd':
+                        cond_value= cond_value.strftime('%Y-%m-%d')
+                    else:
+                        cond_value= f'{cond_value} {np.random.randint(0,24)}:00'
+                        
                 
-                elif text_type=='datetime_ymd':
-                    # dates in a column must be after chrcrit_date
-                    # and should be within 5 days of chrcrit_date
-                    cond_value= chrcrit_date+ timedelta(days=np.random.randint(0,5), 
-                                                        hours=np.random.randint(0,24))
-                    
-                    cond_value= cond_value.strftime('%Y-%m-%d %H:%M')
-
             elif var['Field Type']=='yesno':
                 cond_value= round(np.random.rand())
                 
@@ -286,3 +282,12 @@ for var in dfd.iterrows():
     df[var['Variable / Field Name']]= all_cond_values
 
 df.to_csv(abspath(sys.argv[2]), index= False)
+
+
+# sanity check
+print('\nSanity check:\n')
+var=['mother_info','chrfigs_depdxcalc','status_bmi']
+for v in var:
+    print(v)
+    print(df[v])
+    print('')
