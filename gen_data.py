@@ -126,13 +126,8 @@ for var in dfd.iterrows():
                             
                         values.append(int(val_lab.split(', ')[0]))
                     except:
-                        # float
-                        try:
-                            values.append(float(val_lab.split(', ')[0]))
-                        # FIX in the form
-                        # NA, Not Sure --> -99, Not Sure
-                        except:
-                            values.append('NA')
+                        values.append(float(val_lab.split(', ')[0]))
+                        
                 
                 # randomize according to multinomial distribution
                 L= len(values)
@@ -204,10 +199,9 @@ for var in dfd.iterrows():
         # print(cond_value)
         all_cond_values.append(cond_value)
     
-    try:
-        df[var['Variable / Field Name']]= all_cond_values
-    except:
-        print(all_cond_values)
+    
+    df[var['Variable / Field Name']]= all_cond_values
+    
     
 
 df.to_csv(abspath(sys.argv[2]), index= False)
@@ -286,7 +280,7 @@ df.to_csv(abspath(sys.argv[2]), index= False)
 
 # sanity check
 print('\nSanity check:\n')
-var=['mother_info','chrfigs_depdxcalc','status_bmi']
+var=['mother_info','chrfigs_depdxcalc','status_bmi','status_bed']
 for v in var:
     print(v)
     print(df[v])
