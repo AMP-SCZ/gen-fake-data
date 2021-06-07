@@ -107,7 +107,7 @@ for var in dfd.iterrows():
                     
                     cond_value= eval(given_cond)
                 
-                # this deals with arithmatic addition
+                # this deals with arithmetic addition
                 else:
                 
                     given_cond= given_cond.replace(']','')
