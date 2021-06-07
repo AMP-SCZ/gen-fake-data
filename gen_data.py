@@ -225,25 +225,35 @@ for var in dfd.iterrows():
         logic= var['Branching Logic (Show field only if...)']
 
 
-        if (logic is not np.nan) and ('datediff' not in logic):
-
+        if (logic is not np.nan) and ('datediff' not in logic) and (var['Field Type']!='descriptive'):
 
             logic= logic.lower()
             logic= logic.replace(']','')
             logic= logic.replace('[','dfs[1].')
+
+            # consider two null comparisons--w/o space (= '') and w/ space (<>'')
+            logic = logic.replace("= ''", ' is np.nan')
+            logic = logic.replace("=''", ' is np.nan')
             logic= logic.replace('=','==')
             logic= logic.replace('>==','>=')
             logic= logic.replace('<==','<=')
             logic= logic.replace('\n',' ')
+
+            # consider two null comparisons--w/o space (<>'') and w/ space (<> '')
             logic= logic.replace("<>''",' is not np.nan')
+            logic= logic.replace("<> ''", ' is not np.nan')
             logic= logic.replace('<>', '!=')
-            logic= logic.replace("== ''", 'is np.nan')
+
             # convert the right side of logical expression to int
             logic= logic.replace("'",'')
-            
+
+            # remove leading zeros from branching logic of medlist_dosage_mg_01 et al
+            logic= logic.replace('046','46')
+            logic= logic.replace('048','48')
 
             # notorious checkbox condition
             # e.g. dfs[1].health_skincond(99) == '1'
+            # the search fails if there are both parenthetical logic and checkbox item
             is_checkbox= False
             paren_elm= re.search('\((.+?)\)', logic)
             if paren_elm:
@@ -263,6 +273,9 @@ for var in dfd.iterrows():
                     # reform logic with checked_value
                     logic= logic.split('==')[0]+ f' == {checked_value}'
 
+
+            # print(var['Variable / Field Name'])
+
             try:
                 # print(logic)
                 logic = eval(logic)
@@ -271,7 +284,16 @@ for var in dfd.iterrows():
 
             except TypeError:
                 # TypeError means dfs[1].chrfigs_depdxcalc is np.nan
-                cond_value= ''
+                cond_value = ''
+
+                # original logic
+                # print(var['Branching Logic (Show field only if...)'])
+
+                # modified logic
+                print(logic)
+
+                print('')
+
 
 
         all_cond_values.append(cond_value)
@@ -283,8 +305,9 @@ df.to_csv(abspath(sys.argv[2]), index= False)
 
 # sanity check
 print('\nSanity check:\n')
-var=['mother_info','chrfigs_depdxcalc','status_bmi','status_bed']
+var=['chrfigs_mother_info','chrfigs_depdxcalc','chrchs_bmi','chrchs_bedtime']
 for v in var:
     print(v)
     print(df[v])
     print('')
+
