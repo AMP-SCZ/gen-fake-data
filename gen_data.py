@@ -206,6 +206,8 @@ for var in dfd.iterrows():
 
 df.to_csv(abspath(sys.argv[2]), index= False)
 
+# exit(0)
+
 # TODO keeping this block separate from the above to have more control on debugging
 # apply branching logic
 for var in dfd.iterrows():
@@ -223,7 +225,7 @@ for var in dfd.iterrows():
         logic= var['Branching Logic (Show field only if...)']
 
 
-        if logic is not np.nan:
+        if (logic is not np.nan) and ('datediff' not in logic):
 
 
             logic= logic.lower()
@@ -235,6 +237,7 @@ for var in dfd.iterrows():
             logic= logic.replace('\n',' ')
             logic= logic.replace("<>''",' is not np.nan')
             logic= logic.replace('<>', '!=')
+            logic= logic.replace("== ''", 'is np.nan')
             # convert the right side of logical expression to int
             logic= logic.replace("'",'')
             
