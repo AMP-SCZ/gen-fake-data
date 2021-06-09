@@ -22,7 +22,7 @@ dfd= pd.read_csv(abspath(sys.argv[1]))
 df= pd.DataFrame(columns= dfd['Variable / Field Name'])
 
 # append 100 empty rows
-N=10
+N=100
 # assign a three digit random ID to each row i.e. research subject
 df.chric_subject_id= np.random.randint(100,1000,N)
 
@@ -203,6 +203,9 @@ for var in dfd.iterrows():
     df[var['Variable / Field Name']]= all_cond_values
     
     
+# assign a three digit random ID to each row i.e. research subject
+df.chric_subject_id= np.random.randint(100,1000,N)
+
 
 df.to_csv(abspath(sys.argv[2]), index= False)
 
