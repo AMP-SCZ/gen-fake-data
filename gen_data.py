@@ -8,8 +8,8 @@ import sys
 from os.path import abspath
 
 
-if len(sys.argv)!=3:
-    print('''Usage: /path/to/gen_data.py dict.csv fake_out.csv''')
+if len(sys.argv)!=4:
+    print('''Usage: /path/to/gen_data.py dict.csv template.csv fake_out.csv''')
     exit(0)
 
 
@@ -19,10 +19,14 @@ start_date= date(2021,5,13)
 dfd= pd.read_csv(abspath(sys.argv[1]))
 
 # df is fake data, initialize it
-df= pd.DataFrame(columns= dfd['Variable / Field Name'])
+# df= pd.DataFrame(columns= dfd['Variable / Field Name'])
+import_cols= pd.read_csv(sys.argv[2]).columns
+df= pd.DataFrame(columns=import_cols)
+
+outfile= abspath(sys.argv[3])
 
 # append 100 empty rows
-N=10
+N=1
 # assign a three digit random ID to each row i.e. research subject
 df.chric_subject_id= np.random.randint(100,1000,N)
 
@@ -205,8 +209,11 @@ for var in dfd.iterrows():
     
     df[var['Variable / Field Name']]= all_cond_values
     
-    
-df.to_csv(abspath(sys.argv[2]), index= False)
+
+# screening_arm_1
+# baseline_arm_1
+df.redcap_event_name= ['month_10_arm_1']*N
+df.to_csv(outfile, index= False)
 
 # exit(0)
 
@@ -302,7 +309,7 @@ for var in dfd.iterrows():
 
     df[var['Variable / Field Name']]= all_cond_values
 
-df.to_csv(abspath(sys.argv[2]), index= False)
+df.to_csv(outfile, index= False)
 
 
 # sanity check
