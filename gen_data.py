@@ -223,7 +223,7 @@ for var in dfd.iterrows():
 df.redcap_event_name= ['screening_arm_2']*N
 df.to_csv(outfile, index= False)
 
-exit(0)
+# exit(0)
 
 # TODO keeping this block separate from the above to have more control on debugging
 # apply branching logic
@@ -235,6 +235,10 @@ for var in dfd.iterrows():
     all_cond_values= []
 
     for dfs in df.iterrows():
+        
+        if var['Field Type']=='calc':
+            all_cond_values.append('')
+            continue
         
         cond_value= dfs[1][var['Variable / Field Name']]
 
