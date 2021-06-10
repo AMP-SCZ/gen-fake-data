@@ -26,15 +26,22 @@ df= pd.DataFrame(columns=import_cols)
 outfile= abspath(sys.argv[3])
 
 # append 100 empty rows
-N=1
+N=10
 # assign a three digit random ID to each row i.e. research subject
 df.chric_subject_id= np.random.randint(100,1000,N)
 
-for var in dfd.iterrows():    
+# HC screening_arm_2
+event_forms=['informed_consent','inclusionexclusion_criteria_review_51ae86','guid_form',
+    'schizotypal_personality_scid5_pd','sofas','recruitment_source']
+
+for var in dfd.iterrows():
     
     var= var[1]
     
     if var['Variable / Field Name']=='chric_subject_id':
+        continue
+    
+    if var['Form Name'] not in event_forms:
         continue
     
     # dfs is each row of df i.e. fake data of each subject
@@ -212,10 +219,11 @@ for var in dfd.iterrows():
 
 # screening_arm_1
 # baseline_arm_1
-df.redcap_event_name= ['month_10_arm_1']*N
+# month_10_arm_1
+df.redcap_event_name= ['screening_arm_2']*N
 df.to_csv(outfile, index= False)
 
-# exit(0)
+exit(0)
 
 # TODO keeping this block separate from the above to have more control on debugging
 # apply branching logic
