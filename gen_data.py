@@ -20,8 +20,12 @@ dfd= pd.read_csv(abspath(sys.argv[1]))
 
 # df is fake data, initialize it
 # df= pd.DataFrame(columns= dfd['Variable / Field Name'])
-import_cols= pd.read_csv(sys.argv[2]).columns
-df= pd.DataFrame(columns=import_cols)
+template_cols= pd.read_csv(sys.argv[2]).columns
+
+# drop 'Unnamed: 2345' last column
+if 'Unnamed' in template_cols[-1]:
+    template_cols= template_cols.drop(template_cols[-1])
+df= pd.DataFrame(columns=template_cols)
 
 outfile= abspath(sys.argv[3])
 
