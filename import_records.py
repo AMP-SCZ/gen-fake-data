@@ -2,8 +2,13 @@
 
 from config import config
 import requests
+import sys
 
-with open('../../gen-fake-data/fake_data.csv') as f:
+if len(sys.argv)!=2 or sys.argv[1] in ['-h','--help']:
+    print('''Usage: /path/to/import_records.py fake_out.csv''')
+    exit(0)
+
+with open(sys.argv[1]) as f:
     data= f.read()
 
 fields = {
