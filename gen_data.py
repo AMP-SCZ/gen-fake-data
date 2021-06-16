@@ -28,7 +28,7 @@ if 'Unnamed' in template_cols[-1]:
     template_cols= template_cols.drop(template_cols[-1])
 # df= pd.DataFrame(columns=template_cols)
 
-outfile= abspath(sys.argv[4])
+outPrefix= abspath(sys.argv[4])
 
 # append 100 empty rows
 N=10
@@ -49,7 +49,7 @@ for event_name in dfm['unique_event_name'].agg('unique'):
     # event_forms=['informed_consent','inclusionexclusion_criteria_review_51ae86','guid_form',
     #   'schizotypal_personality_scid5_pd','sofas','recruitment_source']
     
-    outfile+= f'_{event_name}.csv'
+    outfile= f'{outPrefix}_{event_name}.csv'
     
     for var in dfd.iterrows():
         
@@ -340,9 +340,12 @@ for event_name in dfm['unique_event_name'].agg('unique'):
 
     df.to_csv(outfile, index= False)
     
+    
+    # debug break
     serial+=1
-    if serial==2:
-        exit(0)
+    if serial==10:
+        pass
+        # break
 
 # sanity check
 print('\nSanity check:\n')
