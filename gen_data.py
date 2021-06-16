@@ -6,12 +6,13 @@ from datetime import date, timedelta
 import re
 import sys
 from os.path import abspath
+from conversion import read_cases
 
-
-if len(sys.argv)!=5:
-    print('''Usage: /path/to/gen_data.py dict.csv template.csv inst_event_map.csv fake_out.csv''')
+if len(sys.argv)!=6:
+    print('''Usage: /path/to/gen_data.py dict.csv template.csv inst_event_map.csv fake_out.csv fake_ids.txt''')
     exit(0)
 
+cases= read_cases(abspath(sys.argv[-1]))
 
 start_date= date(2021,5,13)
 
@@ -25,24 +26,31 @@ template_cols= pd.read_csv(sys.argv[2]).columns
 # drop 'Unnamed: 2345' last column
 if 'Unnamed' in template_cols[-1]:
     template_cols= template_cols.drop(template_cols[-1])
-df= pd.DataFrame(columns=template_cols)
+# df= pd.DataFrame(columns=template_cols)
 
 outfile= abspath(sys.argv[4])
 
 # append 100 empty rows
 N=10
 # assign a three digit random ID to each row i.e. research subject
-df.chric_subject_id= np.random.randint(100,1000,N)
+# df.chric_subject_id= np.random.randint(100,1000,N)
+# df.chric_subject_id= cases[:10]
 
 # HC screening_arm_2
 dfm= pd.read_csv(abspath(sys.argv[3]))
 
+serial=0
 for event_name in dfm['unique_event_name'].agg('unique'):
-
+    
+    df= pd.DataFrame(columns=template_cols)
+    df.chric_subject_id= cases[:10]
+    
     event_forms= dfm.groupby('unique_event_name').get_group(event_name).form.values
     # event_forms=['informed_consent','inclusionexclusion_criteria_review_51ae86','guid_form',
     #   'schizotypal_personality_scid5_pd','sofas','recruitment_source']
-
+    
+    outfile+= f'_{event_name}.csv'
+    
     for var in dfd.iterrows():
         
         var= var[1]
@@ -332,7 +340,9 @@ for event_name in dfm['unique_event_name'].agg('unique'):
 
     df.to_csv(outfile, index= False)
     
-    exit(0)
+    serial+=1
+    if serial==2:
+        exit(0)
 
 # sanity check
 print('\nSanity check:\n')
