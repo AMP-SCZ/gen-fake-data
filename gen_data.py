@@ -34,9 +34,8 @@ outPrefix= abspath(sys.argv[4])
 N=10
 # assign a three digit random ID to each row i.e. research subject
 # df.chric_subject_id= np.random.randint(100,1000,N)
-# df.chric_subject_id= cases[:10]
 
-# HC screening_arm_2
+# dfm is instrument-event mapping
 dfm= pd.read_csv(abspath(sys.argv[3]))
 
 serial=0
@@ -233,17 +232,14 @@ for event_name in dfm['unique_event_name'].agg('unique'):
         
         df[var['Variable / Field Name']]= all_cond_values
         
-
-# screening_arm_1
-# baseline_arm_1
-# month_10_arm_1
+    
     df.redcap_event_name= [event_name]*N
     df.to_csv(outfile, index= False)
 
-# exit(0)
+    # exit(0)
 
-# TODO keeping this block separate from the above to have more control on debugging
-# apply branching logic
+    # TODO keeping this block separate from the above to have more control on debugging
+    # apply branching logic
     for var in dfd.iterrows():
 
         var= var[1]
