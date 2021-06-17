@@ -57,6 +57,7 @@ for event_name in dfm['unique_event_name'].agg('unique'):
         if var['Variable / Field Name']=='chric_subject_id':
             continue
         
+        # TODO delete this if block
         if var['Form Name'] not in event_forms:
             continue
         
@@ -233,8 +234,29 @@ for event_name in dfm['unique_event_name'].agg('unique'):
         df[var['Variable / Field Name']]= all_cond_values
         
     
+    # populate form status
+    '''
+    dropdown
+    0	Incomplete
+    1	Unverified
+    2	Complete
+    '''
+    L=3
+    prob= [1/L]*L
+    values=[0,1,2]
+    for form in event_forms:
+        
+        # randomize according to multinomial distribution
+        
+        cond_value= []
+        for i in range(N):
+            cond_value.append(values[np.where(np.random.multinomial(1,prob))[0][0]])
+        
+        df[f'{form}_complete']= cond_value
+    
+    
     df.redcap_event_name= [event_name]*N
-    df.to_csv(outfile, index= False)
+    # df.to_csv(outfile, index= False)
 
     # exit(0)
 
@@ -333,15 +355,18 @@ for event_name in dfm['unique_event_name'].agg('unique'):
             all_cond_values.append(cond_value)
 
         df[var['Variable / Field Name']]= all_cond_values
-
+        
+        
     df.to_csv(outfile, index= False)
     
     
     # debug break
     serial+=1
-    if serial==10:
+    if serial==3:
         pass
         # break
+
+
 
 # sanity check
 print('\nSanity check:\n')
