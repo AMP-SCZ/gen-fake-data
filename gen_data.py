@@ -237,13 +237,14 @@ for event_name in dfm['unique_event_name'].agg('unique'):
     # populate form status
     '''
     dropdown
+    ''  Incomplete (no data saved)
     0	Incomplete
     1	Unverified
     2	Complete
     '''
-    L=3
+    L=4
     prob= [1/L]*L
-    values=[0,1,2]
+    values=['',0,1,2]
     for form in event_forms:
         
         # randomize according to multinomial distribution
