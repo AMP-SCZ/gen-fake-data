@@ -7,42 +7,51 @@ import re
 import sys
 from os.path import abspath
 from conversion import read_cases
+import argparse
 
-if len(sys.argv)!=6:
-    print('''Usage: /path/to/gen_data.py dict.csv template.csv inst_event_map.csv fake_out.csv fake_ids.txt''')
-    exit(0)
 
-cases= read_cases(abspath(sys.argv[-1]))
+parser = argparse.ArgumentParser(description='Fake data generator for REDCap forms')
+
+parser.add_argument('--dict', help='Data dictionary')
+parser.add_argument('--template', help='Import template')
+parser.add_argument('--map', help='Instrument event map')
+parser.add_argument('--arm', type=int, help='CHR(1), HC(2)', choices=[1,2])
+parser.add_argument('--outPrefix', help="Fake data CSVs are saved as {outPrefix}.{redcap_event_name}.csv")
+parser.add_argument('--caselist', help='Text file containing subject IDs')
+
+args= parser.parse_args()
+
+cases= read_cases(abspath(args.caselist))
+N= len(cases)
 
 start_date= date(2021,5,13)
 
 # dfd is data dictionary
-dfd= pd.read_csv(abspath(sys.argv[1]))
+dfd= pd.read_csv(abspath(args.dict))
 
 # df is fake data, initialize it
 # df= pd.DataFrame(columns= dfd['Variable / Field Name'])
-template_cols= pd.read_csv(sys.argv[2]).columns
+template_cols= pd.read_csv(args.template).columns
 
 # drop 'Unnamed: 2345' last column
 if 'Unnamed' in template_cols[-1]:
     template_cols= template_cols.drop(template_cols[-1])
 # df= pd.DataFrame(columns=template_cols)
 
-outPrefix= abspath(sys.argv[4])
+outPrefix= abspath(args.outPrefix)
 
-# append 100 empty rows
-N=10
-# assign a three digit random ID to each row i.e. research subject
-# df.chric_subject_id= np.random.randint(100,1000,N)
 
 # dfm is instrument-event mapping
-dfm= pd.read_csv(abspath(sys.argv[3]))
+dfm= pd.read_csv(abspath(args.map))
 
 serial=0
 for event_name in dfm['unique_event_name'].agg('unique'):
     
+    if not event_name.endswith(f'arm_{args.arm}'):
+        continue
+    
     df= pd.DataFrame(columns=template_cols)
-    df.chric_subject_id= cases[:10]
+    df.chric_subject_id= cases
     
     event_forms= dfm.groupby('unique_event_name').get_group(event_name).form.values
     # event_forms=['informed_consent','inclusionexclusion_criteria_review_51ae86','guid_form',
@@ -377,3 +386,4 @@ for v in var:
     print(df[v])
     print('')
 
+ 
