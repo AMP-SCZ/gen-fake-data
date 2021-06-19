@@ -3,11 +3,13 @@ Generate fake REDCap form data respecting choices and branching logics
 
 ### Setup
 
-> pip install -r requirements.txt
+- > pip install -r requirements.txt
 
-> cp config.py.example config.py
+- > cp config.py.example config.py
 
-Put your REDCap API TOKEN in `config.py`
+- Put your REDCap API TOKEN in `config.py`
+
+- > gen-fake-data/gen_data.py --help
 
 ### Generate
 
