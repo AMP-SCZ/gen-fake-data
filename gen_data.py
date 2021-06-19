@@ -10,15 +10,14 @@ from conversion import read_cases
 import argparse
 
 
-def sanity_check(fields, event_name):
+def sanity_check(fields):
     if event_name=='baseline_arm_1':
-        # sanity check
         print('\nSanity check:\n')
-        # var=['chrfigs_mother_info', 'chrfigs_mother_age', 'chrfigs_depdxcalc','chrchs_bmi','chrchs_bedtime']
         for v in fields:
             print(v)
             print(df[v])
             print('')
+
 
 parser = argparse.ArgumentParser(description='Fake data generator for REDCap forms')
 
@@ -278,7 +277,7 @@ for event_name in dfm['unique_event_name'].agg('unique'):
     df.redcap_event_name= [event_name]*N
 
 
-    sanity_check(['chrfigs_depdxcalc','chrchs_bmi','chrchs_bedtime'], event_name)
+    sanity_check(['chrfigs_depdxcalc','chrchs_bmi','chrchs_bedtime'])
 
 
     # df.to_csv(outfile, index= False)
@@ -392,7 +391,7 @@ for event_name in dfm['unique_event_name'].agg('unique'):
         # break
 
     
-    sanity_check(['chrfigs_mother_info', 'chrfigs_mother_age'], event_name)
+    sanity_check(['chrfigs_mother_info', 'chrfigs_mother_age'])
 
 
 
