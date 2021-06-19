@@ -23,3 +23,9 @@ Generate fake REDCap form data respecting choices and branching logics
 
 > for i in fake_data/*csv; do echo $i; gen-fake-data/import_records.py $i; done
 
+
+### Verify
+
+* Login to REDCap
+* Navigate to your project webpage
+* See the `Record Status Dashboard` and `Data Exports, Reports, and Stats` tabs from the left sidebar
