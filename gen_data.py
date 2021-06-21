@@ -232,10 +232,13 @@ for event_name in dfm['unique_event_name'].agg('unique'):
                             chric_consent_date[i]= cond_value
                         
                         else:
-                            # dates in a column must be after consent date
+                            # all other dates for a subject must be after consent date
                             # and should be within 5 days of consent date
-                            # fixing the number to 5 for convenience
+                            # fixing the number to 5 days for convenience
+                            # under this setting, all other dates are chric_consent_date+5 days
                             cond_value= chric_consent_date[i]+ timedelta(days=5)
+                            # enable the following line to have all other dates in an additive series of 5 days
+                            # chric_consent_date[i]= cond_value
                         
                         if text_type=='date_ymd':
                             cond_value= cond_value.strftime('%Y-%m-%d')
