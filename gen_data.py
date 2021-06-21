@@ -34,6 +34,7 @@ cases= read_cases(abspath(args.caselist))
 N= len(cases)
 
 start_date= date(2021,5,13)
+chrcrit_date= [start_date]*N
 
 # dfd is data dictionary
 dfd= pd.read_csv(abspath(args.dict))
@@ -84,7 +85,7 @@ for event_name in dfm['unique_event_name'].agg('unique'):
 
         # TODO below branching logic block could be placed here
 
-        for dfs in df.iterrows():
+        for i,dfs in enumerate(df.iterrows()):
             
             cond_value=''
             
@@ -227,13 +228,13 @@ for event_name in dfm['unique_event_name'].agg('unique'):
                     elif text_type=='date_ymd' or text_type=='datetime_ymd':
                         if var['Variable / Field Name']=='chric_consent_date':
                             # recruitment within the next 3 months
-                            cond_value= start_date+ timedelta(days=np.random.randint(1,90))
-                            chrcrit_date= cond_value
+                            cond_value= start_date+ timedelta(days=np.random.randint(0,90))
+                            chrcrit_date[i]= cond_value
                         
                         else:
                             # dates in a column must be after chrcrit_date
                             # and should be within 5 days of chrcrit_date
-                            cond_value= chrcrit_date+ timedelta(days=np.random.randint(0,5))
+                            cond_value= chrcrit_date[i]+ timedelta(days=np.random.randint(0,5))
                         
                         if text_type=='date_ymd':
                             cond_value= cond_value.strftime('%Y-%m-%d')
